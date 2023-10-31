@@ -38,8 +38,7 @@ const MyDocs = (props) => {
       <div className="flex flex-col md:flex-row items-center gap-4">
         {isEditing ? (
           <div className="flex flex-col w-full">
-            {{/* Lägg till textarea istället för input */}}
-            <input
+            <textarea
               className="w-full mb-2 p-2 border border-slate-700 rounded"
               type="text"
               value={editedTitle}
@@ -49,7 +48,7 @@ const MyDocs = (props) => {
                 textOrientation: 'mixed',
               }}
             />
-            <input
+            <textarea
               className="w-full h-80 mb-2 p-2 border border-slate-700 rounded"
               type="text"
               value={editedContent}

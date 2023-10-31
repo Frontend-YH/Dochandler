@@ -11,7 +11,6 @@ const MainPage = () => {
   const [content, setContent] = useState("");
   const [showInputs, setShowInputs] = useState(false);
   const [expandedDocs, setExpandedDocs] = useState([]); 
-
   const getPosts = async () => {
     try {
       const result = await fetch("/api/docs");
@@ -108,6 +107,7 @@ const MainPage = () => {
     );
   };
 
+  console.log(posts[1])
   return (
     <>
       <Header />

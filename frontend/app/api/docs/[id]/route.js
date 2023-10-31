@@ -2,7 +2,9 @@ import { dbQuery } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req, { params }) {
+console.log("HEEEJ")
   const { id } = params;
+  
   const body = await req.json();
   const { updatedTitle, updatedContent } = body;
   console.log(id, updatedTitle, updatedContent);

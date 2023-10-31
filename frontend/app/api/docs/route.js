@@ -16,7 +16,7 @@ export async function POST(req, res) {
       const { title, content } = body;
 
       await dbQuery({
-        sql: "INSERT INTO docs (docTitle, docContent) VALUES (?, ?)",
+        sql: "INSERT INTO docs (document_name, document_content) VALUES (?, ?)",
         values: [title, content],
       });
 
