@@ -5,6 +5,8 @@ import Header from "./Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
+
+
 const MainPage = () => {
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState("");
@@ -171,6 +173,7 @@ const MainPage = () => {
             />
           ))
         )}
+    
       </div>
     </>
   );
