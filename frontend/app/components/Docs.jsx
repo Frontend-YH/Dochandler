@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFile, faEdit, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import TextEditor from "./Editor";
 
 function formatDateTime(dateTimeString) {
   const options = {
@@ -37,27 +38,17 @@ const MyDocs = (props) => {
       <FontAwesomeIcon icon={faFile} size="xs" className="w-5" />
       <div className="flex flex-col md:flex-row items-center gap-4">
         {isEditing ? (
+          
           <div className="flex flex-col w-full">
-            <textarea
+           
+            <input
               className="w-full mb-2 p-2 border border-slate-700 rounded"
               type="text"
               value={editedTitle}
               onChange={(e) => setEditedTitle(e.target.value)}
-              style={{
-                writingMode: 'vertical-rl',
-                textOrientation: 'mixed',
-              }}
+             
             />
-            <textarea
-              className="w-full h-80 mb-2 p-2 border border-slate-700 rounded"
-              type="text"
-              value={editedContent}
-              onChange={(e) => setEditedContent(e.target.value)}
-              style={{
-                writingMode: 'vertical-rl',
-                textOrientation: 'mixed',
-              }}
-            />
+            <TextEditor textInput={editedContent} placeholder={props.textInput} />
             <button
               className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               onClick={handleSaveClick}
