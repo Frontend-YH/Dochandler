@@ -11,17 +11,19 @@ export default function TextEditor(props) {
             [{ 'color': [] }], ['link'],
           ],
     };
+    
     const [editedContent, setEditedContent] = useState(props.textInput);
     const handleContentChange = (newContent) => {
       setEditedContent(newContent);
+
     };
       return (
         <ReactQuill
-          modules={modules}
-          theme="snow"
-          placeholder={props.placeholder}
-          value={editedContent}
-          onChange={handleContentChange}
-        />
+        modules={modules}
+        theme="snow"
+        placeholder={props.placeholder}
+        value={editedContent}
+        onChange={handleContentChange}
+      />
       );
 }

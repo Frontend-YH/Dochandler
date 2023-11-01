@@ -83,12 +83,16 @@ const MainPage = () => {
 
   const handleSave = async (post, updatedTitle, updatedContent) => {
     try {
+      // Skicka det uppdaterade innehållet som HTML till API
       const response = await fetch("/api/docs/" + post, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ updatedTitle, updatedContent }),
+        body: JSON.stringify({
+          updatedTitle,
+          updatedContent, // HTML-innehållet från TextEditor
+        }),
       });
 
       if (response.ok) {
