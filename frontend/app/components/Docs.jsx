@@ -48,7 +48,10 @@ const MyDocs = (props) => {
               onChange={(e) => setEditedTitle(e.target.value)}
              
             />
-            <TextEditor textInput={editedContent} placeholder={props.textInput} />
+<TextEditor
+  textInput={editedContent}
+  onChange={props.onChange} // Skicka onChange till TextEditor
+/>
             <button
               className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               onClick={handleSaveClick}
