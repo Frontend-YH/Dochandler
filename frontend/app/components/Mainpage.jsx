@@ -4,6 +4,7 @@ import MyDocs from "./Docs";
 import Header from "./Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import TextEditor from "./Editor";
 
 
 
@@ -36,7 +37,7 @@ const MainPage = () => {
   };
 
   const handleContentChange = (e) => {
-    setContent(e.target.value);
+    setContent(e);
   };
 
   const handleSaveDoc = async () => {
@@ -83,7 +84,6 @@ const MainPage = () => {
 
   const handleSave = async (post, updatedTitle, updatedContent) => {
     try {
-      // Skicka det uppdaterade innehållet som HTML till API
       const response = await fetch("/api/docs/" + post, {
         method: "PATCH",
         headers: {
@@ -113,7 +113,7 @@ const MainPage = () => {
     );
   };
 
-  console.log(posts[1])
+
   return (
     <>
       <Header />
@@ -132,7 +132,8 @@ const MainPage = () => {
                   textOrientation: 'mixed',      
                 }}
               />
-              <input
+              <TextEditor onChange={handleContentChange} value={content} />
+              {/* <input
                 type="text"
                 placeholder="Document Content"
                 value={content}
@@ -142,7 +143,7 @@ const MainPage = () => {
                   writingMode: 'vertical-rl',   
                   textOrientation: 'mixed',      
                 }}
-              />
+              /> */}
               <button
                 className="w-full bg-green-500 hover.bg-green-700 text-white font-bold py-2 px-4 rounded"
                 onClick={handleSaveDoc}
