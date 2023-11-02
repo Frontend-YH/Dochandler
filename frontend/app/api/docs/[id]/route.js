@@ -6,12 +6,12 @@ console.log("HEEEJ")
   const { id } = params;
   
   const body = await req.json();
-  const { updatedTitle, updatedContent } = body;
-  console.log(id, updatedTitle, updatedContent);
+  const { updatedTitle, updatedContent, docPrivate } = body;
+  console.log(id, updatedTitle, updatedContent , docPrivate);
 
   try {
-    const sql = "UPDATE docs SET docTitle=?, docContent=? WHERE id = ?";
-    const values = [updatedTitle, updatedContent, parseInt(id)];
+    const sql = "UPDATE docs SET docTitle=?, docContent=? , isPrivate=? WHERE id = ?";
+    const values = [updatedTitle, updatedContent,docPrivate, parseInt(id)];
 
     const result = await dbQuery({ sql, values });
 

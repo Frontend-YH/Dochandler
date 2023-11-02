@@ -5,7 +5,7 @@ import Header from "./Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import TextEditor from "./Editor";
-
+import Switch from "./Switch";
 
 
 const MainPage = () => {
@@ -14,6 +14,7 @@ const MainPage = () => {
   const [content, setContent] = useState("");
   const [showInputs, setShowInputs] = useState(false);
   const [expandedDocs, setExpandedDocs] = useState([]); 
+  const [docPrivate, setPrivate] = useState(false);
   const getPosts = async () => {
     try {
       const result = await fetch("/api/docs");
@@ -50,12 +51,14 @@ const MainPage = () => {
         body: JSON.stringify({
           title,
           content,
+          docPrivate: docPrivate ? 1 : 0, 
         }),
       });
-
+  
       if (response.ok) {
         setTitle("");
         setContent("");
+        setPrivate(false); 
         setShowInputs(false);
         getPosts();
       } else {
@@ -82,7 +85,7 @@ const MainPage = () => {
     }
   };
 
-  const handleSave = async (post, updatedTitle, updatedContent) => {
+  const handleSave = async (post, updatedTitle, updatedContent, docPrivate) => {
     try {
       const response = await fetch("/api/docs/" + post, {
         method: "PATCH",
@@ -91,10 +94,11 @@ const MainPage = () => {
         },
         body: JSON.stringify({
           updatedTitle,
-          updatedContent, // HTML-innehållet från TextEditor
+          updatedContent,
+          docPrivate: docPrivate ? 1 : 0, 
         }),
       });
-
+  
       if (response.ok) {
         getPosts();
       } else {
@@ -133,17 +137,11 @@ const MainPage = () => {
                 }}
               />
               <TextEditor onChange={handleContentChange} value={content} />
-              {/* <input
-                type="text"
-                placeholder="Document Content"
-                value={content}
-                onChange={handleContentChange}
-                className="w-full h-40 mb-4 p-2 rounded border"
-                style={{
-                  writingMode: 'vertical-rl',   
-                  textOrientation: 'mixed',      
-                }}
-              /> */}
+
+              <Switch
+              isOn={docPrivate}
+              handleToggle={() => setPrivate(!docPrivate)}
+              />
               <button
                 className="w-full bg-green-500 hover.bg-green-700 text-white font-bold py-2 px-4 rounded"
                 onClick={handleSaveDoc}
@@ -170,8 +168,8 @@ const MainPage = () => {
               createDate={post.createDate}
               post={post.id}
               onDelete={() => handleDelete(post.id)}
-              onSave={(updatedTitle, updatedContent) =>
-                handleSave(post.id, updatedTitle, updatedContent)
+              onSave={(updatedTitle, updatedContent ,docPrivate) =>
+                handleSave(post.id, updatedTitle, updatedContent,docPrivate)
               }
               onToggle={() => handleToggleDoc(post.id)}
               isExpanded={expandedDocs.includes(post.id)}
