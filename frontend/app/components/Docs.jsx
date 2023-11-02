@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import TextEditor from "./Editor";
 import ReactQuill from "react-quill";
+import Switch from "./Switch";
 
 function formatDateTime(dateTimeString) {
   const options = {
@@ -20,18 +21,18 @@ function formatDateTime(dateTimeString) {
   const date = new Date(dateTimeString);
   return date.toLocaleString("sv-SE", options);
 }
-
 const MyDocs = (props) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(props.docTitle || "");
   const [editedContent, setEditedContent] = useState(props.docContent || "");
+  const [docPrivate, setPrivate] = useState(false);
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
   const handleSaveClick = () => {
-    props.onSave(editedTitle, editedContent);
+    props.onSave(editedTitle, editedContent , docPrivate);
     setIsEditing(false);
   };
 
@@ -55,7 +56,8 @@ const MyDocs = (props) => {
               value={editedContent}
               onChange={(e) => setEditedContent(e)}
             />
-
+            <Switch isOn={docPrivate}
+              handleToggle={() => setPrivate(!docPrivate)}/>
             <button
               className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               onClick={handleSaveClick}
@@ -74,6 +76,7 @@ const MyDocs = (props) => {
                   readOnly={true}
                   className="text-black"
                 />
+                
               ) : (
                 ""
               )}

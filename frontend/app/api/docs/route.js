@@ -13,11 +13,11 @@ export async function POST(req, res) {
   if (req.method === "POST") {
     try {
       const body = await req.json();
-      const { title, content } = body;
+      const { title, content, docPrivate } = body; // Lägg till docPrivate från request body
 
       await dbQuery({
-        sql: "INSERT INTO docs (docTitle, docContent) VALUES (?, ?)",
-        values: [title, content],
+        sql: "INSERT INTO docs (docTitle, docContent, isPrivate) VALUES (?, ?, ?)", // Lägg till ett tredje frågetecken för docPrivate
+        values: [title, content, docPrivate], // Lägg till docPrivate i values-arrayen
       });
 
       return NextResponse.json({
