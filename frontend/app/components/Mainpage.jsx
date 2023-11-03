@@ -159,7 +159,14 @@ const MainPage = () => {
             </button>
           )}
         </div>
-        {showInputs ? null : (
+        {showInputs ? null : posts.length === 0 ? (
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-xl font-bold">Det finns inga inlägg....</h2>
+              <p>Tryck på "Add new doc" för att lägga till inlägg.</p>
+            </div>
+          </div>
+        ) : (
           posts.map((post) => (
             <MyDocs
               key={post.id}
@@ -168,15 +175,14 @@ const MainPage = () => {
               createDate={post.createDate}
               post={post.id}
               onDelete={() => handleDelete(post.id)}
-              onSave={(updatedTitle, updatedContent ,docPrivate) =>
-                handleSave(post.id, updatedTitle, updatedContent,docPrivate)
+              onSave={(updatedTitle, updatedContent, docPrivate) =>
+                handleSave(post.id, updatedTitle, updatedContent, docPrivate)
               }
               onToggle={() => handleToggleDoc(post.id)}
               isExpanded={expandedDocs.includes(post.id)}
             />
           ))
         )}
-    
       </div>
     </>
   );
