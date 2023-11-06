@@ -27,13 +27,14 @@ const MyDocs = (props) => {
   const [editedTitle, setEditedTitle] = useState(props.docTitle || "");
   const [editedContent, setEditedContent] = useState(props.docContent || "");
   const [docPrivate, setPrivate] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
   const handleSaveClick = () => {
-    props.onSave(editedTitle, editedContent , docPrivate);
+    props.onSave(editedTitle, editedContent, docPrivate);
     setIsEditing(false);
   };
 
@@ -43,7 +44,7 @@ const MyDocs = (props) => {
 
   const handleToggleFavorite = async (e) => {
     e.preventDefault();
-    console.log(props.post, props.docContent, props.docTitle)
+    console.log(props.post, props.docContent, props.docTitle);
     try {
       const response = await fetch("/api/favorites", {
         method: "POST",
@@ -58,13 +59,14 @@ const MyDocs = (props) => {
       });
 
       if (response.ok) {
+        setIsFavorite(!isFavorite);
       } else {
         console.error("Something went wrong when adding to favorites.");
       }
     } catch (error) {
       console.error("Something went wrong when adding to favorites:", error);
     }
-  }
+  };
 
   return (
     <div className="w-full md:w-9/12 mb-8 p-5 border rounded-md border-slate-300 hover:border-slate-400">
@@ -82,8 +84,10 @@ const MyDocs = (props) => {
               value={editedContent}
               onChange={(e) => setEditedContent(e)}
             />
-            <Switch isOn={docPrivate}
-              handleToggle={() => setPrivate(!docPrivate)}/>
+            <Switch
+              isOn={docPrivate}
+              handleToggle={() => setPrivate(!docPrivate)}
+            />
             <button
               className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               onClick={handleSaveClick}
@@ -102,7 +106,6 @@ const MyDocs = (props) => {
                   readOnly={true}
                   className="text-black"
                 />
-                
               ) : (
                 ""
               )}
@@ -126,7 +129,11 @@ const MyDocs = (props) => {
           )}
         </button>
         <button onClick={handleToggleFavorite}>
-          <FontAwesomeIcon icon={faStar} />
+          {isFavorite ? (
+            <FontAwesomeIcon icon={faStar} color="gold" />
+          ) : (
+            <FontAwesomeIcon icon={faStar} />
+          )}
         </button>
         <button
           onClick={() => props.onDelete()}
