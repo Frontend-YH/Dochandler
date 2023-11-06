@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Header from "./Header";
 
-export default function Login() {
+export default function Login(props) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loggedInUser, setLoggedInUser] = useState("");
-
-  useEffect(() => {
-    setLoggedInUser(localStorage.getItem("loggedinUser") || "");
-  }, []);
 
   const userEventHandler = (event) => {
     setUsername(event.target.value);
@@ -23,7 +18,7 @@ export default function Login() {
     
     if (username !== "" && password !== "") {
       console.log(username, password);
-        const res = await fetch("/api/users", {
+        const res = await fetch("/api/docs", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -37,19 +32,12 @@ export default function Login() {
 
           setUsername("");
           setPassword("");
-          window.location.reload();
-        } else {
+          props.setLoggedIn(true)
+          } else {
           alert("Wrong login!");
         }
       } 
   };
-
-  /*  const handleLogout = async (event) =>  {
-    event.preventDefault();
-    localStorage.removeItem("user");
-    localStorage.removeItem("userId");
-    window.location.reload();
- } */
 
   return (
     <>
