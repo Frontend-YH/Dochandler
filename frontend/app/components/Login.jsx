@@ -18,7 +18,7 @@ export default function Login(props) {
     
     if (username !== "" && password !== "") {
       console.log(username, password);
-        const res = await fetch("/api/docs", {
+        const res = await fetch("/api/users", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -27,14 +27,14 @@ export default function Login(props) {
         });
 
         if (res.ok) {
+          console.log(res,"response")
           console.log("mjao");
-          let data = await res.json();
-
           setUsername("");
           setPassword("");
           props.setLoggedIn(true)
           } else {
           alert("Wrong login!");
+          props.setLoggedIn(false)
         }
       } 
   };
@@ -45,7 +45,7 @@ export default function Login(props) {
       <form onSubmit={handleLogin}>
         <input
           className="mt-5 border-solid border-2 border-black rounded-xl"
-          placeholder="userName"
+          placeholder="Användarnamn"
           type="text"
           value={username}
           onChange={userEventHandler}
@@ -53,8 +53,8 @@ export default function Login(props) {
         <br />
         <input
           className="border-solid border-2 border-black rounded-xl"
-          placeholder="Password"
-          type="text"
+          placeholder="Lösenord"
+          type="password"
           value={password}
           onChange={passwordEventHandler}
         />
