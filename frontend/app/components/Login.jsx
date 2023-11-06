@@ -27,13 +27,20 @@ export default function Login(props) {
         });
 
         if (res.ok) {
+
+          const data = await res.json();
+          const user = { id: data.id, username };
+        
+          localStorage.setItem("user", JSON.stringify(user));
+
           console.log(res,"response")
-          console.log("mjao");
           setUsername("");
           setPassword("");
           props.setLoggedIn(true)
           } else {
           alert("Wrong login!");
+          setUsername("");
+          setPassword("");
           props.setLoggedIn(false)
         }
       } 
