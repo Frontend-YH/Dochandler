@@ -5,6 +5,7 @@ import {
   faEdit,
   faEye,
   faEyeSlash,
+  faStar,
 } from "@fortawesome/free-solid-svg-icons";
 import TextEditor from "./Editor";
 import ReactQuill from "react-quill";
@@ -39,6 +40,31 @@ const MyDocs = (props) => {
   const handleToggleClick = () => {
     props.onToggle();
   };
+
+  const handleToggleFavorite = async (e) => {
+    e.preventDefault();
+    console.log(props.post, props.docContent, props.docTitle)
+    try {
+      const response = await fetch("/api/favorites", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: props.post,
+          docTitle: props.docTitle,
+          docContent: props.docContent,
+        }),
+      });
+
+      if (response.ok) {
+      } else {
+        console.error("Something went wrong when adding to favorites.");
+      }
+    } catch (error) {
+      console.error("Something went wrong when adding to favorites:", error);
+    }
+  }
 
   return (
     <div className="w-full md:w-9/12 mb-8 p-5 border rounded-md border-slate-300 hover:border-slate-400">
@@ -98,6 +124,9 @@ const MyDocs = (props) => {
           ) : (
             <FontAwesomeIcon icon={faEyeSlash} size="xs" className="w-5" />
           )}
+        </button>
+        <button onClick={handleToggleFavorite}>
+          <FontAwesomeIcon icon={faStar} />
         </button>
         <button
           onClick={() => props.onDelete()}
