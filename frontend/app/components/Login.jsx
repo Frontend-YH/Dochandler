@@ -29,13 +29,15 @@ export default function Login(props) {
         if (res.ok) {
 
           const data = await res.json();
-          const user = { id: data.id, username };
+          const user = { id: data[0].user_id, username };
+         
         
-          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("userID", JSON.stringify(user)); 
 
           console.log(res,"response")
           setUsername("");
           setPassword("");
+          localStorage.setItem('isLoggedIn', 'true'); 
           props.setLoggedIn(true)
           } else {
           alert("Wrong login!");
