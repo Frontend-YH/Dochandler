@@ -15,6 +15,10 @@ const MainPage = () => {
   const [showInputs, setShowInputs] = useState(false);
   const [expandedDocs, setExpandedDocs] = useState([]); 
   const [docPrivate, setPrivate] = useState(false);
+
+const jsonString = localStorage.getItem('userID');
+const user = JSON.parse(jsonString);
+
   const getPosts = async () => {
     try {
       const result = await fetch("/api/docs");
@@ -43,16 +47,19 @@ const MainPage = () => {
 
   const handleSaveDoc = async () => {
     try {
+      const data = {
+        user_id: user.user_id,
+        title, 
+        content, 
+        docPrivate: docPrivate ? 1 : 0, 
+      };
+      console.log(data,"här")
       const response = await fetch("/api/docs", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          title,
-          content,
-          docPrivate: docPrivate ? 1 : 0, 
-        }),
+        body: JSON.stringify(data),
       });
   
       if (response.ok) {

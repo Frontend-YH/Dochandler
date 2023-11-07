@@ -29,10 +29,9 @@ export default function Login(props) {
         if (res.ok) {
 
           const data = await res.json();
-          const user = { id: data[0].user_id, username };
-         
         
-          localStorage.setItem("userID", JSON.stringify(user)); 
+          const user = { user_id: data[0].user_id };
+          localStorage.setItem("userID", JSON.stringify(user));
 
           console.log(res,"response")
           setUsername("");
