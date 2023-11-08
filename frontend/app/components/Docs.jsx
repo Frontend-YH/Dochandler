@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFile,
@@ -27,7 +27,9 @@ const MyDocs = (props) => {
   const [editedTitle, setEditedTitle] = useState(props.docTitle || "");
   const [editedContent, setEditedContent] = useState(props.docContent || "");
   const [docPrivate, setPrivate] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const jsonString = localStorage.getItem("userID");
+  const user = JSON.parse(jsonString);
+
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -44,22 +46,23 @@ const MyDocs = (props) => {
 
   const handleToggleFavorite = async (e) => {
     e.preventDefault();
-    console.log(props.post, props.docContent, props.docTitle);
     try {
+      const data = {
+        user_id: user.user_id,
+        doc_id: props.post,
+      };
       const response = await fetch("/api/favorites", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          id: props.post,
-          docTitle: props.docTitle,
-          docContent: props.docContent,
-        }),
+        body: JSON.stringify(data),
       });
-
       if (response.ok) {
-        setIsFavorite(!isFavorite);
+        props.setIsFavorite((prevFavorites) => ({
+          ...prevFavorites,
+          [props.post]: !prevFavorites[props.post],
+        }));
       } else {
         console.error("Something went wrong when adding to favorites.");
       }
@@ -129,7 +132,7 @@ const MyDocs = (props) => {
           )}
         </button>
         <button onClick={handleToggleFavorite}>
-          {isFavorite ? (
+          {props.favorite ? (
             <FontAwesomeIcon icon={faStar} color="gold" />
           ) : (
             <FontAwesomeIcon icon={faStar} />

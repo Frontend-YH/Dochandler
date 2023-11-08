@@ -2,7 +2,6 @@ import { dbQuery } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req, { params }) {
-console.log("HEEEJ")
   const { id } = params;
   
   const body = await req.json();
@@ -22,14 +21,33 @@ console.log("HEEEJ")
   }
 }
 
+
 export async function DELETE(req, { params }) {
   const { id } = params;
   console.log(params, id, "HÄR!!");
-  try {
-    const sql = "DELETE FROM docs WHERE id = ?";
-    const values = [parseInt(id)];
 
-    const result = await dbQuery({ sql, values });
+  try {
+    const checkDocumentSql = "SELECT 1 FROM docs WHERE id = ?";
+    const checkDocumentValues = [parseInt(id)];
+
+    const checkDocumentResult = await dbQuery({
+      sql: checkDocumentSql,
+      values: checkDocumentValues,
+    });
+
+    if (checkDocumentResult.length === 0) {
+      return NextResponse.json({ error: "Dokumentet finns inte i databasen" }, { status: 404 });
+    }
+
+    const deleteFavoritesSql = "DELETE FROM favorites WHERE doc_id = ?";
+    const deleteFavoritesValues = [parseInt(id)];
+
+    await dbQuery({ sql: deleteFavoritesSql, values: deleteFavoritesValues });
+
+    const deleteDocsSql = "DELETE FROM docs WHERE id = ?";
+    const deleteDocsValues = [parseInt(id)];
+
+    const result = await dbQuery({ sql: deleteDocsSql, values: deleteDocsValues });
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
