@@ -1,34 +1,37 @@
 import { dbQuery } from "@/lib/db";
 import { NextResponse } from "next/server";
 
+
 export async function GET(req, res) {
   const result = await dbQuery({
     sql: "SELECT * FROM favorites",
     values: [],
   });
   return NextResponse.json(result);
-}
+} 
 
 export async function POST(req, res) {
-  if (req.method === "POST") {
-    try {
-      const body = await req.json();
-      const {id, docTitle, docContent } = body;
+  const body = await req.json();
+  const { user_id , doc_id} = body;
 
-      await dbQuery({
-        sql: "INSERT INTO favorites (id, docTitle, docContent) VALUES (?, ?, ?)",
-        values: [id, docTitle, docContent],
-      });
+  const existingFavorite = await dbQuery({
+    sql: "SELECT * FROM favorites WHERE user_id = ? AND doc_id = ?",
+    values: [ user_id , doc_id],
+  });
+  if (existingFavorite.length > 0) {
+    await dbQuery({
+      sql: "DELETE FROM favorites WHERE doc_id = ? AND user_id = ?",
+      values: [doc_id, user_id],
+    });
 
-      return NextResponse.json({
-        success: true,
-        message: "Data sparad i databasen",
-      });
-    } catch (error) {
-      console.error("Fel vid POST-förfrågan:", error);
-      return NextResponse.json({ success: false, message: "Något gick fel" });
-    }
+    return NextResponse.json({ message: "Favorite removed" }, { status: 200 });
+  } else {
+    const result = await dbQuery({
+      sql: "INSERT INTO favorites (doc_id, user_id) VALUES (?, ?)",
+      values: [doc_id, user_id],
+    });
+
+    return NextResponse.json(result, { status: 200 });
   }
-
-  return NextResponse.error(405, "Method Not Allowed");
 }
+

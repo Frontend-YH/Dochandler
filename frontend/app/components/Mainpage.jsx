@@ -15,7 +15,7 @@ const MainPage = () => {
   const [showInputs, setShowInputs] = useState(false);
   const [expandedDocs, setExpandedDocs] = useState([]); 
   const [docPrivate, setPrivate] = useState(false);
-
+  const [isFavorite, setIsFavorite] = useState({});
 const jsonString = localStorage.getItem('userID');
 const user = JSON.parse(jsonString);
 
@@ -125,6 +125,28 @@ const user = JSON.parse(jsonString);
   };
 
 
+  /* get favorites */
+
+  useEffect(() => {
+    const getFavorites = async () => {
+      const res = await fetch("/api/favorites");
+      const favorites = await res.json();
+      const favoritesMap = {};
+     const userFavorites=favorites.filter(fav=>{
+      return fav.user_id === user.user_id
+
+     })
+     console.log(user)
+      userFavorites.forEach((fav) => {
+        favoritesMap[fav.doc_id] = true;
+      });
+
+      setIsFavorite(favoritesMap);
+    };
+
+    getFavorites();
+  }, []);
+
   return (
     <>
       <Header />
@@ -174,9 +196,9 @@ const user = JSON.parse(jsonString);
             </div>
           </div>
         ) : (
-          posts.map((post) => (
+          posts.map((post,index) => (
             <MyDocs
-              key={post.id}
+              key={index}
               docTitle={post.docTitle}
               docContent={post.docContent}
               createDate={post.createDate}
@@ -187,6 +209,9 @@ const user = JSON.parse(jsonString);
               }
               onToggle={() => handleToggleDoc(post.id)}
               isExpanded={expandedDocs.includes(post.id)}
+              isFavorite={isFavorite}
+              setIsFavorite={setIsFavorite}
+              favorite={isFavorite[post.id] ? true : false}
             />
           ))
         )}

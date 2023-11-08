@@ -15,36 +15,33 @@ export default function Login(props) {
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    
+
     if (username !== "" && password !== "") {
       console.log(username, password);
-        const res = await fetch("/api/users", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, password }),
-        });
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-        if (res.ok) {
+      if (res.ok) {
+        const data = await res.json();
 
-          const data = await res.json();
-        
-          const user = { user_id: data[0].user_id };
-          localStorage.setItem("userID", JSON.stringify(user));
-
-          console.log(res,"response")
-          setUsername("");
-          setPassword("");
-          localStorage.setItem('isLoggedIn', 'true'); 
-          props.setLoggedIn(true)
-          } else {
-          alert("Wrong login!");
-          setUsername("");
-          setPassword("");
-          props.setLoggedIn(false)
-        }
-      } 
+        const user = { user_id: data[0].user_id, username: username };
+        localStorage.setItem("userID", JSON.stringify(user));
+        setUsername("");
+        setPassword("");
+        localStorage.setItem("isLoggedIn", "true");
+        props.setLoggedIn(true);
+      } else {
+        alert("Wrong login!");
+        setUsername("");
+        setPassword("");
+        props.setLoggedIn(false);
+      }
+    }
   };
 
   return (
