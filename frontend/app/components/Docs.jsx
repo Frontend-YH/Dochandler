@@ -6,6 +6,7 @@ import {
   faEye,
   faEyeSlash,
   faStar,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import TextEditor from "./Editor";
 import ReactQuill from "react-quill";
@@ -131,6 +132,10 @@ const MyDocs = (props) => {
             <FontAwesomeIcon icon={faEyeSlash} size="xs" className="w-5" />
           )}
         </button>
+        <>
+
+          <p><FontAwesomeIcon icon={faUser} className="mr-2" />{props.username}</p>
+        </>
         <button onClick={handleToggleFavorite}>
           {props.favorite ? (
             <FontAwesomeIcon icon={faStar} color="gold" />

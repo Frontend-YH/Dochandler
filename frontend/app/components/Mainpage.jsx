@@ -49,6 +49,7 @@ const user = JSON.parse(jsonString);
     try {
       const data = {
         user_id: user.user_id,
+        username: user.username,
         title, 
         content, 
         docPrivate: docPrivate ? 1 : 0, 
@@ -199,6 +200,7 @@ const user = JSON.parse(jsonString);
           posts.map((post,index) => (
             <MyDocs
               key={index}
+              username={post.username}
               docTitle={post.docTitle}
               docContent={post.docContent}
               createDate={post.createDate}
