@@ -148,6 +148,8 @@ const user = JSON.parse(jsonString);
     getFavorites();
   }, []);
 
+  const reversedPosts = [...posts].reverse();
+
   return (
     <>
       <Header />
@@ -197,7 +199,7 @@ const user = JSON.parse(jsonString);
             </div>
           </div>
         ) : (
-          posts.map((post,index) => (
+          reversedPosts.map((post,index) => (
             <MyDocs
               key={index}
               username={post.username}
