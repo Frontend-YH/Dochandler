@@ -1,23 +1,23 @@
 import { dbQuery } from "@/lib/db";
 import { NextResponse } from "next/server";
 
- export async function GET(req, res) {
+export async function GET(req, res) {
   const result = await dbQuery({
     sql: "SELECT * FROM docs",
     values: [],
   });
   return NextResponse.json(result);
-} 
-
+}
 
 export async function POST(req, res) {
   if (req.method === "POST") {
     try {
       const body = await req.json();
-      const { user_id,title, content, docPrivate } = body; 
+      const { user_id, username, title, content, docPrivate } = body;
+      console.log(username);
       await dbQuery({
-        sql: "INSERT INTO docs (user_id ,docTitle, docContent, isPrivate) VALUES (?,?, ?, ?)", 
-        values: [user_id,title, content, docPrivate],
+        sql: "INSERT INTO docs (user_id, username ,docTitle, docContent, isPrivate) VALUES (?, ?, ?, ?, ?)",
+        values: [user_id, username, title, content, docPrivate],
       });
 
       return NextResponse.json({

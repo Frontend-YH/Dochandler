@@ -5,7 +5,7 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 const Header = () => {
   const userString = localStorage.getItem("userID");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const userObject = JSON.parse(userString); 
+  const userObject = JSON.parse(userString);
   const username = userObject?.username; 
   useEffect(() => {
     const userLoggedIn = localStorage.getItem("isLoggedIn");
