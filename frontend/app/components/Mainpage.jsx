@@ -23,8 +23,9 @@ const user = JSON.parse(jsonString) || {};
     try {
       const result = await fetch("/api/docs");
       const postsFromApi = await result.json();
-      const reversedPosts = [...postsFromApi].reverse();
-      setPosts(reversedPosts);
+      const nonDeletedPost = postsFromApi.filter(post => !post.isDeleted)
+      const reversedNonDeletedPosts  = [...nonDeletedPost].reverse();
+      setPosts(reversedNonDeletedPosts);
       
     } catch (error) {
       console.error('Något gick fel vid hämtning av data:', error);
