@@ -19,17 +19,18 @@ const MainPage = () => {
 const jsonString = localStorage.getItem('userID');
 const user = JSON.parse(jsonString) || {};
 
-  const getPosts = async () => {
-    try {
-      const result = await fetch("/api/docs");
-      const postsFromApi = await result.json();
-      const reversedPosts = [...postsFromApi].reverse();
-      setPosts(reversedPosts);
-      
-    } catch (error) {
-      console.error('Något gick fel vid hämtning av data:', error);
-    }
-  };
+const getPosts = async () => {
+  try {
+    const result = await fetch("/api/docs");
+    const postsFromApi = await result.json();
+    const nonDeletedPost = postsFromApi.filter(post => !post.isDeleted)
+    const reversedNonDeletedPosts  = [...nonDeletedPost].reverse();
+    setPosts(reversedNonDeletedPosts);
+
+  } catch (error) {
+    console.error('Något gick fel vid hämtning av data:', error);
+  }
+};
 
   useEffect(() => {
     getPosts();
