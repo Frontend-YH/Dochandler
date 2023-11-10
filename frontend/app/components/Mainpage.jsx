@@ -17,13 +17,15 @@ const MainPage = () => {
   const [docPrivate, setPrivate] = useState(false);
   const [isFavorite, setIsFavorite] = useState({});
 const jsonString = localStorage.getItem('userID');
-const user = JSON.parse(jsonString);
+const user = JSON.parse(jsonString) || {};
 
   const getPosts = async () => {
     try {
       const result = await fetch("/api/docs");
       const postsFromApi = await result.json();
-      setPosts(postsFromApi);
+      const reversedPosts = [...postsFromApi].reverse();
+      setPosts(reversedPosts);
+      
     } catch (error) {
       console.error('Något gick fel vid hämtning av data:', error);
     }
@@ -31,6 +33,7 @@ const user = JSON.parse(jsonString);
 
   useEffect(() => {
     getPosts();
+    
   }, []);
 
   const handleAddNewDoc = () => {
@@ -69,6 +72,7 @@ const user = JSON.parse(jsonString);
         setPrivate(false); 
         setShowInputs(false);
         getPosts();
+  
       } else {
         console.error("Något gick fel vid POST-förfrågan");
       }
@@ -148,7 +152,7 @@ const user = JSON.parse(jsonString);
     getFavorites();
   }, []);
 
-  const reversedPosts = [...posts].reverse();
+  
 
   return (
     <>
@@ -199,9 +203,9 @@ const user = JSON.parse(jsonString);
             </div>
           </div>
         ) : (
-          reversedPosts.map((post,index) => (
+          posts.map((post,index) => (
             <MyDocs
-              key={index}
+              key={post.id}
               username={post.username}
               docTitle={post.docTitle}
               docContent={post.docContent}
