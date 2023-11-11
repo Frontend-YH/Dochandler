@@ -30,10 +30,15 @@ const MyDocs = (props) => {
   const [docPrivate, setPrivate] = useState(false);
   const jsonString = localStorage.getItem("userID");
   const user = JSON.parse(jsonString);
-
-
+  /* Logik för om användaren kan ändra i dokumentet */
+  const canEdit = props.localUserId === props.dbUser;
   const handleEditClick = () => {
-    setIsEditing(true);
+    console.log(canEdit, "Can edit");
+    if (canEdit) {
+      setIsEditing(true);
+    } else {
+      alert("Du har inte behörighet att redigera detta inlägg.");
+    }
   };
 
   const handleSaveClick = () => {
@@ -44,7 +49,6 @@ const MyDocs = (props) => {
   const handleToggleClick = () => {
     props.onToggle();
   };
-
   const handleToggleFavorite = async (e) => {
     e.preventDefault();
     try {
@@ -72,6 +76,8 @@ const MyDocs = (props) => {
     }
   };
 
+  console.log("HÄÄÄR", props.localUserId, props.dbUser);
+  console.log(canEdit);
   return (
     <div className="w-full md:w-9/12 mb-8 p-5 border rounded-md border-slate-300 hover:border-slate-400">
       <FontAwesomeIcon icon={faFile} size="xs" className="w-5" />
@@ -117,9 +123,14 @@ const MyDocs = (props) => {
           </div>
         )}
         <p className="text-sm">{formatDateTime(props.createDate)}</p>
-        <button onClick={handleEditClick}>
-          <FontAwesomeIcon icon={faEdit} size="xs" className="w-5" />
-        </button>
+
+        {canEdit ? (
+          <button onClick={handleEditClick}>
+            <FontAwesomeIcon icon={faEdit} size="xs" className="w-5" />
+          </button>
+        ) : (
+          ""
+        )}
         <button
           onClick={handleToggleClick}
           className={`flex w-40 place-content-around text-blue-500 hover:text-blue-700 py-2 px-4 border border-blue-700 rounded ${
@@ -132,10 +143,10 @@ const MyDocs = (props) => {
             <FontAwesomeIcon icon={faEyeSlash} size="xs" className="w-5" />
           )}
         </button>
-        <>
-
-          <p><FontAwesomeIcon icon={faUser} className="mr-2" />{props.username}</p>
-        </>
+        <p>
+          <FontAwesomeIcon icon={faUser} className="mr-2" />
+          {props.username}
+        </p>
         <button onClick={handleToggleFavorite}>
           {props.favorite ? (
             <FontAwesomeIcon icon={faStar} color="gold" />
@@ -143,12 +154,16 @@ const MyDocs = (props) => {
             <FontAwesomeIcon icon={faStar} />
           )}
         </button>
-        <button
-          onClick={() => props.onDelete()}
-          className="flex w-40 place-content-around bg-red-500 hover.bg-red-700 text-white font-bold py-2 px-4 border border-blue-700 rounded"
-        >
-          Delete
-        </button>
+        {canEdit ? (
+          <button
+            onClick={() => props.onDelete()}
+            className="flex w-40 place-content-around bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 border border-blue-700 rounded"
+          >
+            Delete
+          </button>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );
