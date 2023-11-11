@@ -68,6 +68,7 @@ const MyDocs = (props) => {
           ...prevFavorites,
           [props.post]: !prevFavorites[props.post],
         }));
+        window.location.reload();
       } else {
         console.error("Something went wrong when adding to favorites.");
       }

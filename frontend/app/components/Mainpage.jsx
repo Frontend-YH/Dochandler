@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import MyDocs from "./Docs";
 import Header from "./Header";
@@ -7,35 +7,61 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import TextEditor from "./Editor";
 import Switch from "./Switch";
 
-
 const MainPage = () => {
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [showInputs, setShowInputs] = useState(false);
-  const [expandedDocs, setExpandedDocs] = useState([]); 
+  const [expandedDocs, setExpandedDocs] = useState([]);
   const [docPrivate, setPrivate] = useState(false);
   const [isFavorite, setIsFavorite] = useState({});
-const jsonString = localStorage.getItem('userID');
-const user = JSON.parse(jsonString) || {};
-
-const getPosts = async () => {
-  try {
-    const result = await fetch("/api/docs");
-    const postsFromApi = await result.json();
-    const nonDeletedPost = postsFromApi.filter(post => !post.isDeleted)
-    const reversedNonDeletedPosts  = [...nonDeletedPost].reverse();
-    setPosts(reversedNonDeletedPosts);
-
-  } catch (error) {
-    console.error('Något gick fel vid hämtning av data:', error);
-  }
-};
+  const jsonString = localStorage.getItem("userID");
+  const user = JSON.parse(jsonString) || {};
 
   useEffect(() => {
-    getPosts();
-    
-  }, []);
+    const fetchData = async () => {
+      try {
+        const postsResult = await fetch("/api/docs");
+        const postsFromApi = await postsResult.json();
+
+        const favoritesResult = await fetch("/api/favorites");
+        const favorites = await favoritesResult.json();
+
+        const favoritesMap = {};
+        const userFavorites = favorites.filter(fav => fav.user_id === user.user_id);
+
+        userFavorites.forEach((fav) => {
+          favoritesMap[fav.doc_id] = true;
+        });
+
+        const nonDeletedPost = postsFromApi.filter(post => !post.isDeleted);
+        const reversedNonDeletedPosts = [...nonDeletedPost].reverse();
+
+        const sortedPosts = reversedNonDeletedPosts.sort((a, b) => {
+          const aIsFavorite = favoritesMap[a.id] || false;
+          const bIsFavorite = favoritesMap[b.id] || false;
+
+          if (aIsFavorite && !bIsFavorite) return -1;
+          if (!aIsFavorite && bIsFavorite) return 1;
+
+          const dateA = new Date(a.createDate).getTime();
+          const dateB = new Date(b.createDate).getTime();
+
+          return dateB - dateA;
+        });
+
+        setPosts(sortedPosts);
+        setIsFavorite(favoritesMap);
+
+        console.log(sortedPosts, "HÄÄÄR");
+
+      } catch (error) {
+        console.error("Något gick fel vid hämtning av data:", error);
+      }
+    };
+
+    fetchData();
+  }, [user.user_id]); // Uppdatera när användare ändras
 
   const handleAddNewDoc = () => {
     setShowInputs(true);
@@ -49,17 +75,16 @@ const getPosts = async () => {
     setContent(e);
   };
 
-  
   const handleSaveDoc = async () => {
     try {
       const data = {
         user_id: user.user_id,
         username: user.username,
-        title, 
-        content, 
-        docPrivate: docPrivate ? 1 : 0, 
+        title,
+        content,
+        docPrivate: docPrivate ? 1 : 0,
       };
-      console.log(data,"här")
+      console.log(data, "här");
       const response = await fetch("/api/docs", {
         method: "POST",
         headers: {
@@ -67,14 +92,13 @@ const getPosts = async () => {
         },
         body: JSON.stringify(data),
       });
-  
+
       if (response.ok) {
         setTitle("");
         setContent("");
-        setPrivate(false); 
+        setPrivate(false);
         setShowInputs(false);
-        getPosts();
-  
+        fetchData(); // Uppdatera efter att ha sparat dokumentet
       } else {
         console.error("Något gick fel vid POST-förfrågan");
       }
@@ -90,7 +114,7 @@ const getPosts = async () => {
       });
 
       if (response.ok) {
-        getPosts();
+        fetchData(); // Uppdatera efter att ha raderat dokumentet
       } else {
         console.error("Något gick fel vid radering av dokumentet.");
       }
@@ -109,12 +133,12 @@ const getPosts = async () => {
         body: JSON.stringify({
           updatedTitle,
           updatedContent,
-          docPrivate: docPrivate ? 1 : 0, 
+          docPrivate: docPrivate ? 1 : 0,
         }),
       });
-  
+
       if (response.ok) {
-        getPosts();
+        fetchData(); // Uppdatera efter att ha sparat uppdateringarna
       } else {
         console.error("Något gick fel vid PATCH-förfrågan.");
       }
@@ -131,39 +155,6 @@ const getPosts = async () => {
     );
   };
 
-
-  /* get favorites */
-
-  useEffect(() => {
-    const getFavorites = async () => {
-      const res = await fetch("/api/favorites");
-      const favorites = await res.json();
-      const favoritesMap = {};
-     const userFavorites=favorites.filter(fav=>{
-      return fav.user_id === user.user_id
-
-     })
-     console.log(user)
-      userFavorites.forEach((fav) => {
-        favoritesMap[fav.doc_id] = true;
-      });
-
-      setIsFavorite(favoritesMap);
-    };
-
-    getFavorites();
-  }, []);
-
-  /* Funktion för att visa privata inlägg */
-  const filterPosts = () => {
-    return posts.filter((post) => {
-      if (user.user_id === post.user_id || !post.isPrivate) {
-        return true;
-      }
-      return post.isPrivate && user.user_id === post.user_id;
-    });
-  };
-
   return (
     <>
       <Header />
@@ -178,15 +169,15 @@ const getPosts = async () => {
                 onChange={handleTitleChange}
                 className="w-full mb-4 p-2 rounded border"
                 style={{
-                  writingMode: 'vertical-rl',  
-                  textOrientation: 'mixed',      
+                  writingMode: "vertical-rl",
+                  textOrientation: "mixed",
                 }}
               />
               <TextEditor onChange={handleContentChange} value={content} />
 
               <Switch
-              isOn={docPrivate}
-              handleToggle={() => setPrivate(!docPrivate)}
+                isOn={docPrivate}
+                handleToggle={() => setPrivate(!docPrivate)}
               />
               <button
                 className="w-full bg-green-500 hover.bg-green-700 text-white font-bold py-2 px-4 rounded"
@@ -205,7 +196,7 @@ const getPosts = async () => {
             </button>
           )}
         </div>
-        {showInputs ? null : filterPosts().length === 0 ? (
+        {showInputs ? null : posts.length === 0 ? (
           <div className="w-full h-full flex items-center justify-center">
             <div className="text-center">
               <h2 className="text-xl font-bold">Det finns inga inlägg....</h2>
@@ -213,7 +204,7 @@ const getPosts = async () => {
             </div>
           </div>
         ) : (
-          filterPosts().map((post, index) => (
+          posts.map((post, index) => (
             <MyDocs
               key={post.id}
               username={post.username}
