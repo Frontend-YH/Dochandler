@@ -154,7 +154,15 @@ const getPosts = async () => {
     getFavorites();
   }, []);
 
-  
+  /* Funktion för att visa privata inlägg */
+  const filterPosts = () => {
+    return posts.filter((post) => {
+      if (user.user_id === post.user_id || !post.isPrivate) {
+        return true;
+      }
+      return post.isPrivate && user.user_id === post.user_id;
+    });
+  };
 
   return (
     <>
@@ -197,7 +205,7 @@ const getPosts = async () => {
             </button>
           )}
         </div>
-        {showInputs ? null : posts.length === 0 ? (
+        {showInputs ? null : filterPosts().length === 0 ? (
           <div className="w-full h-full flex items-center justify-center">
             <div className="text-center">
               <h2 className="text-xl font-bold">Det finns inga inlägg....</h2>
@@ -205,7 +213,7 @@ const getPosts = async () => {
             </div>
           </div>
         ) : (
-          posts.map((post,index) => (
+          filterPosts().map((post, index) => (
             <MyDocs
               key={post.id}
               username={post.username}
@@ -222,6 +230,8 @@ const getPosts = async () => {
               isFavorite={isFavorite}
               setIsFavorite={setIsFavorite}
               favorite={isFavorite[post.id] ? true : false}
+              localUserId={user.user_id}
+              dbUser={post.user_id}
             />
           ))
         )}
