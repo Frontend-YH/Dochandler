@@ -61,7 +61,16 @@ const MainPage = () => {
     };
 
     fetchData();
-  }, [user.user_id]); // Uppdatera när användare ändras
+  }, [user.user_id]); 
+
+  const filterPosts = () => {
+    return posts.filter((post) => {
+      if (user.user_id === post.user_id || !post.isPrivate) {
+        return true;
+      }
+      return post.isPrivate && user.user_id === post.user_id;
+    });
+  };
 
   const handleAddNewDoc = () => {
     setShowInputs(true);
@@ -98,7 +107,7 @@ const MainPage = () => {
         setContent("");
         setPrivate(false);
         setShowInputs(false);
-        fetchData(); // Uppdatera efter att ha sparat dokumentet
+        fetchData(); 
       } else {
         console.error("Något gick fel vid POST-förfrågan");
       }
@@ -114,7 +123,7 @@ const MainPage = () => {
       });
 
       if (response.ok) {
-        fetchData(); // Uppdatera efter att ha raderat dokumentet
+        fetchData();
       } else {
         console.error("Något gick fel vid radering av dokumentet.");
       }
@@ -138,7 +147,7 @@ const MainPage = () => {
       });
 
       if (response.ok) {
-        fetchData(); // Uppdatera efter att ha sparat uppdateringarna
+        fetchData(); 
       } else {
         console.error("Något gick fel vid PATCH-förfrågan.");
       }
@@ -204,7 +213,7 @@ const MainPage = () => {
             </div>
           </div>
         ) : (
-          posts.map((post, index) => (
+          filterPosts().map((post, index) => (
             <MyDocs
               key={post.id}
               username={post.username}
