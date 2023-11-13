@@ -18,53 +18,53 @@ const MainPage = () => {
   const [docPrivate, setPrivate] = useState(false);
   const [isFavorite, setIsFavorite] = useState({});
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [titleError, setTitleError] = useState("");
+  const [contentError, setContentError] = useState("");
   const jsonString = localStorage.getItem("userID");
   const user = JSON.parse(jsonString) || {};
 
+  const fetchData = async () => {
+    try {
+      const postsResult = await fetch("/api/docs");
+      const postsFromApi = await postsResult.json();
+
+      const favoritesResult = await fetch("/api/favorites");
+      const favorites = await favoritesResult.json();
+
+      const favoritesMap = {};
+      const userFavorites = favorites.filter(
+        (fav) => fav.user_id === user.user_id
+      );
+
+      userFavorites.forEach((fav) => {
+        favoritesMap[fav.doc_id] = true;
+      });
+
+      const nonDeletedPost = postsFromApi.filter((post) => !post.isDeleted);
+      const reversedNonDeletedPosts = [...nonDeletedPost].reverse();
+
+      const sortedPosts = reversedNonDeletedPosts.sort((a, b) => {
+        const aIsFavorite = favoritesMap[a.id] || false;
+        const bIsFavorite = favoritesMap[b.id] || false;
+
+        if (aIsFavorite && !bIsFavorite) return -1;
+        if (!aIsFavorite && bIsFavorite) return 1;
+
+        const dateA = new Date(a.createDate).getTime();
+        const dateB = new Date(b.createDate).getTime();
+
+        return dateB - dateA;
+      });
+
+      setPosts(sortedPosts);
+      setIsFavorite(favoritesMap);
+    } catch (error) {
+      console.error("Något gick fel vid hämtning av data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const postsResult = await fetch("/api/docs");
-        const postsFromApi = await postsResult.json();
-
-        const favoritesResult = await fetch("/api/favorites");
-        const favorites = await favoritesResult.json();
-
-        const favoritesMap = {};
-        const userFavorites = favorites.filter(fav => fav.user_id === user.user_id);
-
-        userFavorites.forEach((fav) => {
-          favoritesMap[fav.doc_id] = true;
-        });
-
-        const nonDeletedPost = postsFromApi.filter(post => !post.isDeleted);
-        const reversedNonDeletedPosts = [...nonDeletedPost].reverse();
-
-        const sortedPosts = reversedNonDeletedPosts.sort((a, b) => {
-          const aIsFavorite = favoritesMap[a.id] || false;
-          const bIsFavorite = favoritesMap[b.id] || false;
-
-          if (aIsFavorite && !bIsFavorite) return -1;
-          if (!aIsFavorite && bIsFavorite) return 1;
-
-          const dateA = new Date(a.createDate).getTime();
-          const dateB = new Date(b.createDate).getTime();
-
-          return dateB - dateA;
-        });
-
-        setPosts(sortedPosts);
-        setIsFavorite(favoritesMap);
-
-        console.log(sortedPosts, "HÄÄÄR");
-
-      } catch (error) {
-        console.error("Något gick fel vid hämtning av data:", error);
-      }
-    };
-
     fetchData();
-  }, [user.user_id]); 
+  }, [user.user_id]);
 
   const filterPosts = () => {
     return posts.filter((post) => {
@@ -88,6 +88,8 @@ const MainPage = () => {
   };
 
   const handleSaveDoc = async () => {
+    setTitleError("");
+    setContentError("");
     try {
       const data = {
         user_id: user.user_id,
@@ -96,6 +98,17 @@ const MainPage = () => {
         content,
         docPrivate: docPrivate ? 1 : 0,
       };
+
+      if (!data.title) {
+        setTitleError("Title is required");
+        return;
+      }
+
+      if (!data.content || data.content.trim() === "<p><br></p>") {
+        setContentError("Content is required");
+        return;
+      }
+
       console.log(data, "här");
       const response = await fetch("/api/docs", {
         method: "POST",
@@ -110,7 +123,7 @@ const MainPage = () => {
         setContent("");
         setPrivate(false);
         setShowInputs(false);
-        fetchData(); 
+        fetchData();
       } else {
         console.error("Något gick fel vid POST-förfrågan");
       }
@@ -150,7 +163,7 @@ const MainPage = () => {
       });
 
       if (response.ok) {
-        fetchData(); 
+        fetchData();
       } else {
         console.error("Något gick fel vid PATCH-förfrågan.");
       }
@@ -181,7 +194,7 @@ const MainPage = () => {
   return (
     <>
       <Header />
-     
+
       <div className="w-screen flex flex-col items-center">
         <div className="m-4">
           {showInputs ? (
@@ -197,7 +210,11 @@ const MainPage = () => {
                   textOrientation: "mixed",
                 }}
               />
+              {titleError && <p className="text-red-600">{titleError}</p>}
+
               <TextEditor onChange={handleContentChange} value={content} />
+              
+              {contentError && <p className="text-red-600">{contentError}</p>}
 
               <Switch
                 isOn={docPrivate}
@@ -211,17 +228,25 @@ const MainPage = () => {
               </button>
             </div>
           ) : (
-            <button
-              className="w-full bg-blue-500 hover.bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={handleAddNewDoc}
-            >
-              <FontAwesomeIcon icon={faPlus} size="xs" className="w-5" />
-              <p className="font-light">Add new doc</p>
-            </button>
+            <>
+              <button
+                className="w-full bg-blue-500 hover.bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={handleAddNewDoc}
+              >
+                <FontAwesomeIcon icon={faPlus} size="xs" className="w-5" />
+                <p className="font-light">Add new doc</p>
+              </button>
+              <SearchBar posts={posts} setPosts={setPosts} />
+              <Dropdown />
+            </>
           )}
+
            <SearchBar/>
            <Dropdown onDropChange={setSelectedFilter} />
+
+
         </div>
+
         {showInputs ? null : posts.length === 0 ? (
           <div className="w-full h-full flex items-center justify-center">
             <div className="text-center">
@@ -239,6 +264,7 @@ const MainPage = () => {
               createDate={post.createDate}
               post={post.id}
               onDelete={() => handleDelete(post.id)}
+              isPrivate={post.isPrivate}
               onSave={(updatedTitle, updatedContent, docPrivate) =>
                 handleSave(post.id, updatedTitle, updatedContent, docPrivate)
               }

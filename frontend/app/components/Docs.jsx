@@ -30,7 +30,6 @@ const MyDocs = (props) => {
   const [docPrivate, setPrivate] = useState(false);
   const jsonString = localStorage.getItem("userID");
   const user = JSON.parse(jsonString);
-  /* Logik för om användaren kan ändra i dokumentet */
   const canEdit = props.localUserId === props.dbUser;
   const handleEditClick = () => {
     console.log(canEdit, "Can edit");
@@ -94,8 +93,8 @@ const MyDocs = (props) => {
               onChange={(e) => setEditedContent(e)}
             />
             <Switch
-              isOn={docPrivate}
-              handleToggle={() => setPrivate(!docPrivate)}
+              isOn={props.isPrivate}
+              handleToggle={() => setPrivate(!props.isPrivate)}
             />
             <button
               className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
