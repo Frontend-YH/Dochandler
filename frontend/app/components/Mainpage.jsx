@@ -237,12 +237,11 @@ const MainPage = () => {
                 <p className="font-light">Add new doc</p>
               </button>
               <SearchBar posts={posts} setPosts={setPosts} />
-              <Dropdown />
+              <Dropdown onDropChange={setSelectedFilter} />
             </>
           )}
 
-           <SearchBar/>
-           <Dropdown onDropChange={setSelectedFilter} />
+           
 
 
         </div>
