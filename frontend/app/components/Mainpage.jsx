@@ -17,6 +17,8 @@ const MainPage = () => {
   const [expandedDocs, setExpandedDocs] = useState([]);
   const [docPrivate, setPrivate] = useState(false);
   const [isFavorite, setIsFavorite] = useState({});
+  const [titleError, setTitleError] = useState("");
+  const [contentError, setContentError] = useState("");
   const jsonString = localStorage.getItem("userID");
   const user = JSON.parse(jsonString) || {};
 
@@ -85,6 +87,8 @@ const MainPage = () => {
   };
 
   const handleSaveDoc = async () => {
+    setTitleError("");
+    setContentError("");
     try {
       const data = {
         user_id: user.user_id,
@@ -93,6 +97,17 @@ const MainPage = () => {
         content,
         docPrivate: docPrivate ? 1 : 0,
       };
+
+      if (!data.title) {
+        setTitleError("Title is required");
+        return;
+      }
+
+      if (!data.content || data.content.trim() === "<p><br></p>") {
+        setContentError("Content is required");
+        return;
+      }
+
       console.log(data, "här");
       const response = await fetch("/api/docs", {
         method: "POST",
@@ -184,7 +199,11 @@ const MainPage = () => {
                   textOrientation: "mixed",
                 }}
               />
+              {titleError && <p className="text-red-600">{titleError}</p>}
+
               <TextEditor onChange={handleContentChange} value={content} />
+              
+              {contentError && <p className="text-red-600">{contentError}</p>}
 
               <Switch
                 isOn={docPrivate}
