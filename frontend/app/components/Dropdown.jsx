@@ -1,15 +1,19 @@
-import React from 'react'
-import { Select, Option } from "@material-tailwind/react";
+import React from 'react';
 
-export default function Dropdown() {
- 
+const Dropdown = ({ onDropChange }) => {
+  const handleDropChange = (e) => {
+    onDropChange(e.target.value);
+  };
+
   return (
-    <div className="w-72 ">
-      <Select variant="outlined" label="Välj kategori">
-        <Option>Alla inlägg</Option>
-        <Option>Mina inlägg</Option>
-        <Option>Favorite inlägg</Option>
-      </Select>
+    <div className="w-72">
+      <select className="border rounded p-2" onChange={handleDropChange}>
+        <option value="all">Alla inlägg</option>
+        <option value="mine">Mina inlägg</option>
+        <option value="favorite">Favorite inlägg</option>
+      </select>
     </div>
-  )
-}
+  );
+};
+
+export default Dropdown;
