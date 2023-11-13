@@ -30,7 +30,6 @@ const MyDocs = (props) => {
   const [docPrivate, setPrivate] = useState(false);
   const jsonString = localStorage.getItem("userID");
   const user = JSON.parse(jsonString);
-  /* Logik för om användaren kan ändra i dokumentet */
   const canEdit = props.localUserId === props.dbUser;
   const handleEditClick = () => {
     console.log(canEdit, "Can edit");

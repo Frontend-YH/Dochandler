@@ -1,13 +1,28 @@
-import { Button, Input } from "@material-tailwind/react";
+"use client";
+import { useEffect, useState } from "react";
+import { Input } from "@material-tailwind/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import React, { useState } from "react";
+export default function Search(props) {
+  const [posts, setPosts] = useState([]);
 
-export default function SearchBar(props) {
-  const [searchTerm, setSearchTerm] = useState("");
+  useEffect(() => {
+    const getPost = async () => {
+      const res = await fetch("/api/docs");
+      const posts = await res.json();
+      const nonDeletedPost = posts.filter((post) => !post.isDeleted);
+      setPosts(nonDeletedPost);
+    };
+    getPost();
+  }, []);
 
-  const handleSearch = () => {
-    console.log(searchTerm,"sökordet")
+  let searchResults;
+  const searchFieldChange = (e) => {
+    searchResults = posts.filter((post) => {
+      return post.docTitle.toLowerCase().includes(e.target.value.toLowerCase());
+    });
+
+    props.setPosts(searchResults);
   };
 
   return (
@@ -24,13 +39,9 @@ export default function SearchBar(props) {
           labelProps={{
             className: "before:content-none after:content-none",
           }}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={searchFieldChange}
         />
       </div>
-      <Button size="sm" className="rounded-lg text-slate-950" onClick={handleSearch}>
-        Search
-      </Button>
     </div>
   );
 }
