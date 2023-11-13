@@ -93,8 +93,8 @@ const MyDocs = (props) => {
               onChange={(e) => setEditedContent(e)}
             />
             <Switch
-              isOn={docPrivate}
-              handleToggle={() => setPrivate(!docPrivate)}
+              isOn={props.isPrivate}
+              handleToggle={() => setPrivate(!props.isPrivate)}
             />
             <button
               className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"

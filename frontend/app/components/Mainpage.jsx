@@ -148,7 +148,6 @@ const MainPage = () => {
 
       if (response.ok) {
         fetchData();
-        window.location.reload();
       } else {
         console.error("Något gick fel vid PATCH-förfrågan.");
       }
@@ -229,6 +228,7 @@ const MainPage = () => {
               createDate={post.createDate}
               post={post.id}
               onDelete={() => handleDelete(post.id)}
+              isPrivate={post.isPrivate}
               onSave={(updatedTitle, updatedContent, docPrivate) =>
                 handleSave(post.id, updatedTitle, updatedContent, docPrivate)
               }
