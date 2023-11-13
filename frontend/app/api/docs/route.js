@@ -14,7 +14,7 @@ export async function POST(req, res) {
     try {
       const body = await req.json();
       const { user_id, username, title, content, docPrivate } = body;
-      console.log(username);
+
       await dbQuery({
         sql: "INSERT INTO docs (user_id, username ,docTitle, docContent, isPrivate) VALUES (?, ?, ?, ?, ?)",
         values: [user_id, username, title, content, docPrivate],
