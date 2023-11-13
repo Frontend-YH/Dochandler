@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import TextEditor from "./Editor";
 import Switch from "./Switch";
+import SearchBar from "./SearchBar";
+import Dropdown from "./Dropdown";
 
 const MainPage = () => {
   const [posts, setPosts] = useState([]);
@@ -167,6 +169,7 @@ const MainPage = () => {
   return (
     <>
       <Header />
+     
       <div className="w-screen flex flex-col items-center">
         <div className="m-4">
           {showInputs ? (
@@ -204,6 +207,8 @@ const MainPage = () => {
               <p className="font-light">Add new doc</p>
             </button>
           )}
+           <SearchBar/>
+           <Dropdown/>
         </div>
         {showInputs ? null : posts.length === 0 ? (
           <div className="w-full h-full flex items-center justify-center">
