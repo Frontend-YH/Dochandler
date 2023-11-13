@@ -77,8 +77,6 @@ const MyDocs = (props) => {
     }
   };
 
-  console.log("HÄÄÄR", props.localUserId, props.dbUser);
-  console.log(canEdit);
   return (
     <div className="w-full md:w-9/12 mb-8 p-5 border rounded-md border-slate-300 hover:border-slate-400">
       <FontAwesomeIcon icon={faFile} size="xs" className="w-5" />
