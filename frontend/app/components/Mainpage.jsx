@@ -17,6 +17,7 @@ const MainPage = () => {
   const [expandedDocs, setExpandedDocs] = useState([]);
   const [docPrivate, setPrivate] = useState(false);
   const [isFavorite, setIsFavorite] = useState({});
+  const [selectedFilter, setSelectedFilter] = useState('all');
   const [titleError, setTitleError] = useState("");
   const [contentError, setContentError] = useState("");
   const jsonString = localStorage.getItem("userID");
@@ -179,6 +180,17 @@ const MainPage = () => {
     );
   };
 
+  const applyFilters = () => {
+    return posts.filter((post) => {
+      if (selectedFilter === 'mine') {
+        return user.user_id === post.user_id;
+      } else if (selectedFilter === 'favorite') {
+        return isFavorite[post.id];
+      }
+      return !post.isPrivate || user.user_id === post.user_id;
+    });
+  };
+
   return (
     <>
       <Header />
@@ -228,6 +240,11 @@ const MainPage = () => {
               <Dropdown />
             </>
           )}
+
+           <SearchBar/>
+           <Dropdown onDropChange={setSelectedFilter} />
+
+
         </div>
 
         {showInputs ? null : posts.length === 0 ? (
@@ -238,7 +255,7 @@ const MainPage = () => {
             </div>
           </div>
         ) : (
-          filterPosts().map((post, index) => (
+          applyFilters().map((post, index) => (
             <MyDocs
               key={post.id}
               username={post.username}
