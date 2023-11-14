@@ -9,22 +9,35 @@ To get started with this project, follow the steps below:
 1. Clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/oh007/dokumenthanteraren.git
+git clone https://github.com/Frontend-YH/Dochandler.git
 ```
 
 2. Navigate to the "frontend" directory within the cloned repository:
 
 ```bash
 cd dokumenthanteraren/frontend
-```
 
-3. Install the required dependencies using npm:
+```
+3. In frontend directory create a file names .env.local and paste credentials in it
+
+```
+DB_HOST=localhost
+DB_PORT=8889
+DB_NAME=docs
+DB_USER=docs
+DB_PASSWORD=docs
+
+```
+4. Install the required dependencies using npm:
 
 ```bash
 npm install
 ```
 
-4. Run the development server:
+5. Import the SQL-server using PHPmyadmin 
+
+
+6. Run the development server:
 
 ```bash
 npm run dev
@@ -32,13 +45,4 @@ npm run dev
 
 The project will now be running locally at http://localhost:3000.
 
-## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
