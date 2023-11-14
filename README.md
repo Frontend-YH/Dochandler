@@ -15,7 +15,7 @@ git clone https://github.com/Frontend-YH/Dochandler.git
 2. Navigate to the "frontend" directory within the cloned repository:
 
 ```bash
-cd dokumenthanteraren/frontend
+cd dochandler/frontend
 
 ```
 3. In frontend directory create a file names .env.local and paste credentials in it
