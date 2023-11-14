@@ -236,8 +236,10 @@ const MainPage = () => {
                 <FontAwesomeIcon icon={faPlus} size="xs" className="w-5" />
                 <p className="font-light">Add new doc</p>
               </button>
+              <div className="flex justify-content: center m-5">
               <SearchBar posts={posts} setPosts={setPosts} />
               <Dropdown onDropChange={setSelectedFilter} />
+              </div>
             </>
           )}
 
